@@ -1,4 +1,4 @@
-Open source implementation of the C++ Stl according to 
+Open source freestanding implementation of the C++ Stl according to 
 the February 2011 standard's draft, with the following exceptions:
 - No Multithread support
 - No exceptions support
