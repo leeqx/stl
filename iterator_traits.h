@@ -31,7 +31,18 @@ namespace std
 		typedef ptrdiff_t					difference_type;
 		typedef _t*							pointer;
 		typedef _t&							reference;
-		typedef bidirectional_iterator_tag	iterator_category;
+		typedef random_access_iterator_tag	iterator_category;
+	};
+
+	// iterator_traits specialization for pointers to const
+	template< class _t >
+	struct iterator_traits< const _t*>
+	{
+		typedef _t							value_type;
+		typedef ptrdiff_t					difference_type;
+		typedef _t*							pointer;
+		typedef _t&							reference;
+		typedef random_access_iterator_tag	iterator_category;
 	};
 }	// namespace std
 
