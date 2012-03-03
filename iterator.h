@@ -7,7 +7,11 @@
 #ifndef _STL_ITERATOR_H_
 #define _STL_ITERATOR_H_
 
+#include <cassert>
 #include <cstddef>
+
+#include <iterator_tags.h>
+#include <iterator_traits.h>
 
 namespace std
 {
@@ -18,13 +22,86 @@ namespace std
 		, class Pointer = T*
 		, class Reference = T& >
 		struct iterator
+		{
+			typedef T			value_type;
+			typedef Distance	difference_type;
+			typedef Pointer		pointer;
+			typedef Reference	reference;
+			typedef Category	iterator_category;
+		};
+
+	// ----- Operations on iterators ------
+	// Advance
+	template< class InputIterator, class Distance>
+		void advance ( InputIterator& i, Distance n )
+		{
+			if(typename iterator_traits<InputIterator>::iterator_category == random_access_iterator_tag)
+			{
+				i = i+n;
+			}
+			else
+			{
+				if(typename iterator_traits<InputIterator>::iterator_category != bidirectional_iterator_tag)
+				{
+					assert(n >= 0);
+					for(Distance d = 0; d < n; ++d)
+						++i;
+				}
+				else
+				{
+					if(n >= 0)
+					{
+						for(Distance d = 0; d < n; ++d)
+							++i;
+					}
+					else
+					{
+						for(Distance d = 0; d > n; --d)
+							--i;
+					}
+				}
+			}
+		}
+
+	// Distance
+	template< class InputIterator >
+	typename iterator_traits<InputIterator>::difference_type
+		distance( InputIterator& first, InputIterator& last )
 	{
-		typedef T			value_type;
-		typedef Distance	difference_type;
-		typedef Pointer		pointer;
-		typedef Reference	reference;
-		typedef Category	iterator_category;
-	};
+		if(typename std::iterator_traits<InputIterator>::iterator_category == std::random_access_iterator_tag)
+		{
+			return last - first;
+		}
+		else
+		{
+			typename std::iterator_traits<InputIterator>::difference_type d = 0;
+			InputIterator i = first;
+			while(i != last)
+			{
+				++d;
+				++i;
+			}
+			return d;
+		}
+	}
+
+	// Next
+	template < class ForwardIterator >
+	ForwardIterator next ( ForwardIterator& i,
+		typename std::iterator_traits<ForwardIterator>::difference_type n )
+	{
+		advance( i , n );
+		return i;
+	}
+
+	// Prev
+	template < class BidirectionalIterator >
+	BidirectionalIterator prev ( BidirectionalIterator& i,
+		typename std::iterator_traits<BidirectionalIterator>::difference_type n )
+	{
+		advance( i, -n );
+		return i;
+	}
 
 }	// namespace std
 
