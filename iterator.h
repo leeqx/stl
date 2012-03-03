@@ -103,6 +103,15 @@ namespace std
 		return i;
 	}
 
+	// ----- Iterator adaptators -----
+	// TODO: Reverse iterator
+	// TODO: Insert iterator
+	// TODO: Move iterator
+
+	// ----- Iterator streams -----
+	// TODO: all
+
+
 }	// namespace std
 
 #endif // _STL_ITERATOR_H_
