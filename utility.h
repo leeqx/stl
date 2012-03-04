@@ -81,6 +81,25 @@ namespace std
 		swap(first, p.first);
 		swap(second, p.second);
 	}
+
+	// ----------- specialized algorithms -------------
+	template < class T1, class T2 >
+	bool operator == (const pair<T1,T2>& a, const pair<T1,T2>& b)
+	{
+		return a.first == b.first && a.second == b.second;
+	}
+
+	template < class T1, class T2 >
+	bool operator < (const pair<T1,T2>& a, const pair<T1,T2>& b)
+	{
+		return a.first < b.first && a.second < b.second;
+	}
+
+	template < class T1, class T2 >
+	void swap ( pair<T1,T2>& a, pair<T1,T2>& b )
+	{
+		a.swap(b);
+	}
 }	// namespace std
 
 #endif // _STL_UTILITY_H_
