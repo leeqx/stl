@@ -12,39 +12,39 @@ namespace std
 	// TODO: Operators
 	// Inequality operator
 	template<class T>
-	bool operator != (const T& a, const T& b)
+	inline bool operator != (const T& a, const T& b)
 	{
 		return ! (a == b);
 	}
 	// bigger than comparison
 	template<class T>
-	bool operator > ( const T& a, const T& b)
+	inline bool operator > ( const T& a, const T& b)
 	{
 		return b < a;
 	}
 	// lessOrEqualThan comparison
 	template<class T>
-	bool operator <= (const T& a, const T& b)
+	inline bool operator <= (const T& a, const T& b)
 	{
 		return ! (b < a);
 	}
 	// moreOrEqualThan comparison
 	template<class T>
-	bool operator >= (const T& a, const T& b)
+	inline bool operator >= (const T& a, const T& b)
 	{
 		return !(a < b);
 	}
 	// TODO: General utilities
 	// Swap
 	template <class T>
-	void swap(T& a, T& b)
+	inline void swap(T& a, T& b)
 	{
 		T temp = a;
 		a = b;
 		b = temp;
 	}
 
-	// ----- Pair -------------
+	// ----- Pair declaration -------------
 	template < class T1, class T2 >
 	struct pair
 	{
@@ -54,12 +54,32 @@ namespace std
 		T1 first;
 		T2 second;
 
-		constexpr pair();
 		pair(const T1&, const T2&);
 
-		pair& operator=(const pair& x);
+		pair& operator=(const pair&);
 
-		void swap(pair& p);
+		void swap(pair&);
+	}
+
+	// ----- Pair implementation ------------
+	template < class T1, class T2 >
+	inline pair<T1, T2>::pair(const T1& a, const T2& b)
+		:first(a)
+		,second(b)
+	{}
+
+	template < class T1, class T2 >
+	pair<T1,T2>::operator=(const pair<T1,T2>& p)
+	{
+		first = p.first;
+		second = p.second;
+	}
+
+	template < class T1, class T2 >
+	void pair<T1,T2>::swap(pair& p)
+	{
+		swap(first, p.first);
+		swap(second, p.second);
 	}
 }	// namespace std
 
