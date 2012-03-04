@@ -6,6 +6,8 @@
 #ifndef _STL_MEMORY_H_
 #define _STL_MEMORY_H_
 
+#include <cstddef>
+
 namespace std
 {
 	template <class Alloc>
@@ -26,8 +28,35 @@ namespace std
 
 		static void deallocate(Alloc& a, pointer p, size_type n);
 	};
-
+	
 	// TODO: Define allocator_traits and finish its declaration
+
+	// ---------------- Default allocator ---------------
+	template < class T >
+	class allocator
+	{
+	public:
+		typedef size_t		size_type;
+		typedef ptrdiff_t	difference_type;
+		typedef T*			pointer;
+		typedef const T*	const_pointer;
+		typedef T&			reference;
+		typedef const T&	const_reference;
+		typedef T			value_type;
+
+		allocator();
+		allocator(const allocator&);
+		~allocator();
+
+		pointer			address		(reference x) const;
+		const_pointer	address		(const_reference) const;
+
+		pointer			allocate	(size_type, const void * hint = 0);
+		size_type		max_size	() const;
+
+		void			construct	( _T* _p, const _T& _x );
+		void			destroy		( _T* _p );
+	};
 }	// namespace std
 
 #endif // _STL_MEMORY_H_
