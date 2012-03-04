@@ -16,11 +16,23 @@ namespace std
 	{
 		return ! (a == b);
 	}
-	// -------- Inequality comparison -----------
+	// bigger than comparison
 	template<class T>
 	bool operator > ( const T& a, const T& b)
 	{
 		return b < a;
+	}
+	// lessOrEqualThan comparison
+	template<class T>
+	bool operator <= (const T& a, const T& b)
+	{
+		return ! (b < a);
+	}
+	// moreOrEqualThan comparison
+	template<class T>
+	bool operator >= (const T& a, const T& b)
+	{
+		return !(a < b);
 	}
 	// TODO: General utilities
 	// Swap
