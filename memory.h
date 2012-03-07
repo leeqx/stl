@@ -7,6 +7,7 @@
 #define _STL_MEMORY_H_
 
 #include <cstddef>
+#include <cstdlib>
 
 namespace std
 {
@@ -54,9 +55,71 @@ namespace std
 		pointer			allocate	(size_type, const void * hint = 0);
 		size_type		max_size	() const;
 
-		void			construct	( _T* _p, const _T& _x );
-		void			destroy		( _T* _p );
+		void			construct	(pointer _p, const_reference _x );
+		void			destroy		(pointer _p );
 	};
+
+	//------------------------------------------------------------------------
+	template<class T>
+	allocator<T>::allocator()
+	{
+	}
+
+	//------------------------------------------------------------------------
+	template<class T>
+	allocator<T>::allocator(const allocator<T>&)
+	{
+	}
+
+	//------------------------------------------------------------------------
+	template<class T>
+	allocator<T>::~allocator()
+	{
+	}
+
+	//------------------------------------------------------------------------
+	template<class T>
+	typename allocator<T>::pointer allocator<T>::address(typename allocator<T>::reference x) const
+	{
+		return &x; // Return the address of x
+	}
+
+	//------------------------------------------------------------------------
+	template<class T>
+	typename allocator<T>::const_pointer allocator<T>::address(typename allocator<T>::const_reference x) const
+	{
+		return &x; // Return the address of x
+	}
+
+	//------------------------------------------------------------------------
+	template<class T>
+	typename allocator<T>::pointer allocator<T>::allocate(typename allocator<T>::size_type size, const void * hint)
+	{
+		hint; // unused variable
+		return reinterpret_cast<pointer>(malloc(size));
+	}
+
+	//------------------------------------------------------------------------
+	template<class T>
+	typename allocator<T>::size_type allocator<T>::max_size() const
+	{
+		return numeric_limits<unsigned int>::max()/sizeof(size_type)
+	}
+
+	//------------------------------------------------------------------------
+	template<class T>
+	inline void allocator<T>::construct( typename allocator<T>::pointer _pAllocatedMemory
+								, typename allocator<T>::const_reference _argument)
+	{
+		new (_pAllocatedMemory)T(_argument); // Placement new of T
+	}
+
+	//------------------------------------------------------------------------
+	template<class T>
+	inline void allocator<T>::destroy(typename allocator<T>::pointer _object)
+	{
+		_object->~T(); // Call object's destructor, but do not deallocate memory
+	}
 }	// namespace std
 
 #endif // _STL_MEMORY_H_
