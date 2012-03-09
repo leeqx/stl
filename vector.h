@@ -324,7 +324,8 @@ namespace rtl
 		{
 			mAlloc.construct(&temp_buffer[i], mData[i]);
 		}
-		allocator_traits<allocatorT>::deallocate(mAlloc, mData, mCapacity);
+		if(0 != mCapacity)
+			allocator_traits<allocatorT>::deallocate(mAlloc, mData, mCapacity);
 		mData = temp_buffer;
 		mCapacity = n;
 		mSize = n<mSize?n:mSize;

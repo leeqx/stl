@@ -7,7 +7,6 @@
 #define _RTL_MEMORY_H_
 
 #include <cstddef>
-#include <cstdlib>
 #include <new>
 #include <numeric>
 
@@ -101,7 +100,7 @@ namespace rtl
 	typename allocator<T>::pointer allocator<T>::allocate(typename allocator<T>::size_type size, const void * hint)
 	{
 		hint; // Unused variable
-		return reinterpret_cast<pointer>(malloc(size));
+		return reinterpret_cast<pointer>(new char[size * sizeof(T)]);
 	}
 
 	//------------------------------------------------------------------------
@@ -109,7 +108,7 @@ namespace rtl
 	void allocator<T>::deallocate(typename allocator<T>::pointer p, typename allocator<T>::size_type n)
 	{
 		n;	// Unused variable
-		free(p);
+		delete[] reinterpret_cast<char*>(p);
 	}
 
 	//------------------------------------------------------------------------
