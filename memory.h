@@ -8,6 +8,7 @@
 
 #include <cstddef>
 #include <cstdlib>
+#include <new>
 #include <numeric>
 
 namespace rtl
@@ -25,10 +26,10 @@ namespace rtl
 		typedef typename Alloc::difference_type		difference_type;
 		typedef typename Alloc::size_type			size_type;
 
-		static pointer allocate(Alloc& a, size_type n);
-		static pointer allocate(Alloc& a, size_type n, const_void_pointer hint);
+		static pointer allocate(Alloc& a, size_type n) { return a.allocate(n); }
+		static pointer allocate(Alloc& a, size_type n, const_void_pointer hint) { return a.allocate(n,hint); }
 
-		static void deallocate(Alloc& a, pointer p, size_type n);
+		static void deallocate(Alloc& a, pointer p, size_type n) { a.deallocate(p, n); }
 	};
 	
 	// TODO: Define allocator_traits and finish its declaration
@@ -56,9 +57,10 @@ namespace rtl
 		const_pointer	address		(const_reference) const;
 
 		pointer			allocate	(size_type, const void * hint = 0);
+		void			deallocate	(pointer p, size_type n);
 		size_type		max_size	() const;
 
-		void			construct	(pointer _p, const_reference _x );
+		void			construct	(pointer _p, const_reference _x = T());
 		void			destroy		(pointer _p );
 	};
 
@@ -98,8 +100,16 @@ namespace rtl
 	template<class T>
 	typename allocator<T>::pointer allocator<T>::allocate(typename allocator<T>::size_type size, const void * hint)
 	{
-		hint; // unused variable
+		hint; // Unused variable
 		return reinterpret_cast<pointer>(malloc(size));
+	}
+
+	//------------------------------------------------------------------------
+	template<class T>
+	void allocator<T>::deallocate(typename allocator<T>::pointer p, typename allocator<T>::size_type n)
+	{
+		n;	// Unused variable
+		free(p);
 	}
 
 	//------------------------------------------------------------------------

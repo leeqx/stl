@@ -40,7 +40,7 @@ namespace rtl
 		~vector	();	// Destructor
 		vector<T,allocatorT>& operator=(const vector<T,allocatorT>& x);
 
-		allocator_type get_allocator() const;
+		allocator_type get_allocator() const { return mAlloc; }
 
 	public:
 		// Iterators
@@ -50,28 +50,28 @@ namespace rtl
 		const_iterator	end		() const;
 
 		// Capacity
-		size_type		size	() const;
-		size_type		max_size() const;
+		size_type		size	() const		{ return mSize; }
+		size_type		max_size() const		{ return mAlloc.max_size; }
 		void			resize	(size_type n);
 		void			resize	(size_type n, const T& x);
-		size_type		capacity() const;
-		bool			empty	() const;
-		void			reserve	(size_type n);
-		void			shrink_to_fit();
+		size_type		capacity() const		{return mCapacity; }
+		bool			empty	() const		{ 0 == mSize; }
+		void			reserve	(size_type n)	{ if(n>mCapacity) reallocate(n); }
+		void			shrink_to_fit()			{ if(mSize != mCapacity) reallocate(mSize); }
 
 		// Element access
-		reference		operator[]	(size_type n);
-		const_reference operator[]	(size_type n) const;
-		const_reference at			(size_type n) const;
-		reference		at			(size_type n);
-		reference		front		();
-		const_reference	front		() const;
-		reference		back		();
-		const_reference	back		() const;
+		reference		operator[]	(size_type n)		{ return mData[n]; }
+		const_reference operator[]	(size_type n) const { return mData[n]; }
+		const_reference at			(size_type n) const { return mData[n]; }
+		reference		at			(size_type n)		{ return mData[n]; }
+		reference		front		()			{ *mData; }
+		const_reference	front		() const	{ *mData; }
+		reference		back		()			{ mData[mSize-1]; }
+		const_reference	back		() const	{ mData[mSize-1]; }
 
 		// Data access
-		T*				data		();
-		const T*		data		() const;
+		T*				data		()			{ return mData; }
+		const T*		data		() const	{ return mData; }
 
 		// Modifiers
 		void			push_back	(const T&);
@@ -103,18 +103,24 @@ namespace rtl
 			typedef random_access_iterator_tag	iterator_category;
 
 			// Construction, copy and destruction
-			const_iterator				();	// default constructor
-			const_iterator				(const const_iterator&);	// Copy constructor
-			const_iterator& operator=	(const const_iterator&);	// Assignment operator
-			~const_iterator				();
+			const_iterator				()	// default constructor
+				: mData(0) {}
+			const_iterator				(pointer x)
+				: mData(const_cast<T*>(x)) {}
+			const_iterator				(const const_iterator& x)	// Copy constructor
+				:mData(x.mData) {}
+			const_iterator& operator=	(const const_iterator& x)	// Assignment operator
+			{ mData = x.mData; }
+			~const_iterator				() {}
 
 			// Basic iterator requirements
-			reference		operator*	() const;
-			const_iterator&	operator++	();
+			reference		operator*	() const { return *mData; }
+			const_iterator&	operator++	()		 { mData++; return *this; }
 
 			// Input iterator requirements
-			bool			operator==	(const const_iterator&) const;	// Equality comparison
-			pointer			operator->	() const;
+			bool			operator==	(const const_iterator& x) const	// Equality comparison
+				 { return mData == x.mData;}
+			pointer			operator->	() const { return mData;  }
 			const_iterator	operator++	(int);
 
 			// bidirectional iterator requirements
@@ -130,6 +136,9 @@ namespace rtl
 			reference		operator[]	(difference_type n);
 
 			bool			operator<	(const const_iterator& );
+
+		protected:
+			T* mData;
 		};
 
 		class iterator : public const_iterator
@@ -141,20 +150,31 @@ namespace rtl
 			typedef T&	reference;
 			typedef typename rtl::allocator_traits<allocatorT>::difference_type	difference_type;
 			typedef random_access_iterator_tag	iterator_category;
+			
+			// Construction, copy and destruction
+			iterator				()	// default constructor
+				: typename const_iterator(0) {}
+			iterator				(pointer x)
+				: typename const_iterator(x) {}
+			iterator				(const iterator& x)	// Copy constructor
+				: typename const_iterator(x) {}
+			iterator& operator=		(const iterator& x)	// Assignment operator
+			{	mData = x.mData; }
+			~iterator				() {}
 
 			// Basic iterator requirements
-			iterator&	operator++	();
+			iterator&	operator++	() { ++mData; return *this; }
 			
 			// Input iterator requirements
-			iterator	operator++	(int);
+			iterator	operator++	(int) { ++mData; return *this; }
 			
 			// Output iterator requirements
-			reference	operator*	() const;
-			pointer		operator->	() const;
+			reference	operator*	() const { return *mData; }
+			pointer		operator->	() const { return mData;  }
 
 			// bidirectional iterator requirements
-			iterator&	operator--	();
-			iterator	operator--	(int);
+			iterator&	operator--	() { --mData; return *this; }
+			iterator	operator--	(int) { +--Data; return *this; }
 
 			// Random access iterator requirements
 			iterator&	operator+=	(difference_type n);
@@ -166,6 +186,15 @@ namespace rtl
 
 			bool		operator<	(const iterator& );
 		};
+
+		private:
+			size_type	mSize;
+			size_type	mCapacity;
+			T*			mData;
+			allocatorT	mAlloc;
+
+	private:
+		void reallocate( size_type n );
 	};
 
 	// Specialized algorithms
@@ -174,6 +203,175 @@ namespace rtl
 	{
 		a.swap(b);
 	}
+
+	// ---- Vector definition ----------------------------------------------------------------------------------------
+	template<class T, class allocatorT>
+	vector<T,allocatorT>::vector(const allocatorT& _alloc)
+		:mSize(0)
+		,mCapacity(0)
+		,mData(0)
+		,mAlloc(_alloc)
+	{
+	}
+
+	//-----------------------------------------------------------------------
+	template<class T, class allocatorT>
+	vector<T,allocatorT>::vector(typename vector<T,allocatorT>::size_type n)
+		:mSize(0)
+		,mCapacity(0)
+		,mData(0)
+	{
+		resize(n);
+	}
+
+	//-----------------------------------------------------------------------
+	template<class T, class allocatorT>
+	vector<T, allocatorT>::vector(typename vector<T,allocatorT>::size_type n,
+		const T& x, const allocatorT& alloc)
+		:mSize(0)
+		,mCapacity(0)
+		,mData(0)
+		,mAlloc(alloc)
+	{
+		resize(n, x);
+	}
+
+	//-----------------------------------------------------------------------
+	template<class T, class allocatorT>
+	vector<T,allocatorT>& vector<T,allocatorT>::operator=(const vector<T,allocatorT>& x)
+	{
+		clear();	// Delete previous content
+		if(x.mSize > mCapacity)
+			reallocate(x.mSize);
+		mSize = x.mSize;
+		for(size_type i = 0; i < mSize; ++i)
+		{
+			mAlloc.construct(&mData[i], x[i]);
+		}
+		return *this;
+	}
+
+	//-----------------------------------------------------------------------
+	template<class T, class allocatorT>
+	vector<T, allocatorT>::~vector()
+	{
+		resize(0);
+		allocator_traits<allocatorT>::deallocate(mAlloc, mData, mCapacity);
+	}
+
+	//-----------------------------------------------------------------------
+	template<class T, class allocatorT>
+	typename vector<T, allocatorT>::iterator vector<T,allocatorT>::begin()
+	{
+		return iterator(mData);
+	}
+
+	//-----------------------------------------------------------------------
+	template<class T, class allocatorT>
+	typename vector<T, allocatorT>::const_iterator vector<T,allocatorT>::begin() const
+	{
+		return const_iterator(mData);
+	}
+
+	//-----------------------------------------------------------------------
+	template<class T, class allocatorT>
+	typename vector<T, allocatorT>::iterator vector<T,allocatorT>::end()
+	{
+		return iterator(mData?&mData[mSize]:0);
+	}
+
+	//-----------------------------------------------------------------------
+	template<class T, class allocatorT>
+	typename vector<T, allocatorT>::const_iterator vector<T,allocatorT>::end() const
+	{
+		return const_iterator(mData?&mData[mSize]:0);
+	}
+
+	//-----------------------------------------------------------------------
+	template<class T, class allocatorT>
+	void vector<T, allocatorT>::resize(typename vector<T,allocatorT>::size_type n)
+	{
+		if(n > mCapacity)
+		{
+			reallocate(n);
+		}
+		while(n > mSize)
+			mAlloc.construct(&mData[mSize++]);
+		while(n < mSize)
+			mAlloc.destroy(&mData[--mSize]);
+	}
+
+	//-----------------------------------------------------------------------
+	template<class T, class allocatorT>
+	void vector<T, allocatorT>::resize(typename vector<T,allocatorT>::size_type n, const T& x)
+	{
+		if(n > mCapacity)
+		{
+			reallocate(n);
+		}
+		while(n > mSize)
+			mAlloc.construct(&mData[mSize++], x);
+		while(n < mSize)
+			mAlloc.destroy(&mData[--mSize]);
+	}
+
+	//-----------------------------------------------------------------------
+	template<class T, class allocatorT>
+	void vector<T, allocatorT>::reallocate(size_type n)
+	{
+		T* temp_buffer = allocator_traits<allocatorT>::allocate(mAlloc, n);
+		for(size_type i = 0; i < n, i < mSize; ++i)
+		{
+			mAlloc.construct(&temp_buffer[i], mData[i]);
+		}
+		allocator_traits<allocatorT>::deallocate(mAlloc, mData, mCapacity);
+		mData = temp_buffer;
+		mCapacity = n;
+		mSize = n<mSize?n:mSize;
+	}
+
+	//-----------------------------------------------------------------------
+	template<class T, class allocatorT>
+	void vector<T, allocatorT>::clear()
+	{
+		resize(0);
+	}
+
+	//-----------------------------------------------------------------------
+	template<class T, class allocatorT>
+	void vector<T, allocatorT>::push_back(const T& x)
+	{
+		if(mSize == mCapacity)
+		{
+			if(0 == mCapacity)
+				reallocate(2);
+			else
+				reallocate(mCapacity*2);
+		}
+		mAlloc.construct(&mData[mSize++], x);
+	}
+
+	//-----------------------------------------------------------------------
+	template<class T, class allocatorT>
+	void vector<T, allocatorT>::pop_back()
+	{
+		mAlloc.destroy(&mData[--mSize]);
+	}
+
+	//-----------------------------------------------------------------------
+	template<class T, class allocatorT>
+	typename vector<T,allocatorT>::iterator vector<T, allocatorT>::erase(typename vector<T,allocatorT>::const_iterator x)
+	{
+		T* aux = const_cast<T*>(&*x);
+		while(aux < &mData[mSize-1])
+		{
+			*aux = *(aux+1);
+			++aux;
+		}
+		mAlloc.destroy(&mData[--mSize]); // Destroy last element and decrease size
+		return iterator(const_cast<T*>(&*x));
+	}
+
 }	// namespace rtl
 
 #endif // _RTL_VECTOR_H_
