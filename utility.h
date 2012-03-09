@@ -4,10 +4,10 @@
 // On March 3rd, 2012
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef _STL_UTILITY_H_
-#define _STL_UTILITY_H_
+#ifndef _RTL_UTILITY_H_
+#define _RTL_UTILITY_H_
 
-namespace std
+namespace rtl
 {
 	// TODO: Operators
 	// Inequality operator
@@ -54,12 +54,12 @@ namespace std
 		T1 first;
 		T2 second;
 
-		pair(const T1&, const T2&);
+		pair(const T1& _first = T1(), const T2& _second = T2());
 
 		pair& operator=(const pair&);
 
 		void swap(pair&);
-	}
+	};
 
 	// ----- Pair implementation ------------
 	template < class T1, class T2 >
@@ -69,10 +69,11 @@ namespace std
 	{}
 
 	template < class T1, class T2 >
-	pair<T1,T2>::operator=(const pair<T1,T2>& p)
+	pair<T1,T2>& pair<T1,T2>::operator=(const pair<T1,T2>& p)
 	{
 		first = p.first;
 		second = p.second;
+		return *this;
 	}
 
 	template < class T1, class T2 >
@@ -106,6 +107,6 @@ namespace std
 	{
 		return pair<T1,T2>(a, b);
 	}
-}	// namespace std
+}	// namespace rtl
 
-#endif // _STL_UTILITY_H_
+#endif // _RTL_UTILITY_H_

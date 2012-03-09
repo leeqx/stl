@@ -4,14 +4,14 @@
 // On March 2nd, 2012
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef _STL_ITERATOR_TRAITS_H_
-#define _STL_ITERATOR_TRAITS_H_
+#ifndef _RTL_ITERATOR_TRAITS_H_
+#define _RTL_ITERATOR_TRAITS_H_
 
-#include <cstddef>
+#include <crtldef>
 
 #include <iterator_tags.h>
 
-namespace std
+namespace rtl
 {	
 	template< class _t >
 	struct iterator_traits
@@ -44,6 +44,6 @@ namespace std
 		typedef _t&							reference;
 		typedef random_access_iterator_tag	iterator_category;
 	};
-}	// namespace std
+}	// namespace rtl
 
-#endif // _STL_ITERATOR_TRAITS_H_
+#endif // _RTL_ITERATOR_TRAITS_H_

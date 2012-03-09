@@ -3,26 +3,27 @@
 // Created by Carmelo J. Fernández-Agüera Tortosa, a.k.a. Technik
 // On March 4th, 2012
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef _STL_MEMORY_H_
-#define _STL_MEMORY_H_
+#ifndef _RTL_MEMORY_H_
+#define _RTL_MEMORY_H_
 
 #include <cstddef>
 #include <cstdlib>
+#include <numeric>
 
-namespace std
+namespace rtl
 {
 	template <class Alloc>
 	struct allocator_traits
 	{
-		typedef Alloc						allocator_type;
-		typedef Alloc::value_type			value_type;
-		typedef Alloc::pointer				pointer;
-		typedef Alloc::const_pointer		const_pointer;
-		typedef Alloc::void_pointer			void_pointer;
-		typedef Alloc::const_void_pointer	const_void_pointer;
+		typedef Alloc								allocator_type;
+		typedef typename Alloc::value_type			value_type;
+		typedef typename Alloc::pointer				pointer;
+		typedef typename Alloc::const_pointer		const_pointer;
+		typedef typename Alloc::void_pointer		void_pointer;
+		typedef typename Alloc::const_void_pointer	const_void_pointer;
 
-		typedef Alloc::difference_type		difference_type;
-		typedef Alloc::size_type			size_type;
+		typedef typename Alloc::difference_type		difference_type;
+		typedef typename Alloc::size_type			size_type;
 
 		static pointer allocate(Alloc& a, size_type n);
 		static pointer allocate(Alloc& a, size_type n, const_void_pointer hint);
@@ -44,6 +45,8 @@ namespace std
 		typedef T&			reference;
 		typedef const T&	const_reference;
 		typedef T			value_type;
+		typedef void*		void_pointer;
+		typedef const void*	const_void_pointer;
 
 		allocator();
 		allocator(const allocator&);
@@ -103,7 +106,7 @@ namespace std
 	template<class T>
 	typename allocator<T>::size_type allocator<T>::max_size() const
 	{
-		return numeric_limits<unsigned int>::max()/sizeof(size_type)
+		return (1024 * 1024 * 1024 * 4)/sizeof(size_type); // TODO: Find a nicer way and/or implement real per-platform limits
 	}
 
 	//------------------------------------------------------------------------
@@ -120,6 +123,6 @@ namespace std
 	{
 		_object->~T(); // Call object's destructor, but do not deallocate memory
 	}
-}	// namespace std
+}	// namespace rtl
 
-#endif // _STL_MEMORY_H_
+#endif // _RTL_MEMORY_H_

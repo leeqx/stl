@@ -4,16 +4,16 @@
 // On March 2nd, 2012
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef _STL_ITERATOR_H_
-#define _STL_ITERATOR_H_
+#ifndef _RTL_ITERATOR_H_
+#define _RTL_ITERATOR_H_
 
 #include <cassert>
-#include <cstddef>
+#include <crtldef>
 
 #include <iterator_tags.h>
 #include <iterator_traits.h>
 
-namespace std
+namespace rtl
 {
 	// Generic iterator template class
 	template < class Category
@@ -68,13 +68,13 @@ namespace std
 	typename iterator_traits<InputIterator>::difference_type
 		distance( InputIterator& first, InputIterator& last )
 	{
-		if(typename std::iterator_traits<InputIterator>::iterator_category == std::random_access_iterator_tag)
+		if(typename rtl::iterator_traits<InputIterator>::iterator_category == rtl::random_access_iterator_tag)
 		{
 			return last - first;
 		}
 		else
 		{
-			typename std::iterator_traits<InputIterator>::difference_type d = 0;
+			typename rtl::iterator_traits<InputIterator>::difference_type d = 0;
 			InputIterator i = first;
 			while(i != last)
 			{
@@ -88,7 +88,7 @@ namespace std
 	// Next
 	template < class ForwardIterator >
 	ForwardIterator next ( ForwardIterator& i,
-		typename std::iterator_traits<ForwardIterator>::difference_type n )
+		typename rtl::iterator_traits<ForwardIterator>::difference_type n )
 	{
 		advance( i , n );
 		return i;
@@ -97,7 +97,7 @@ namespace std
 	// Prev
 	template < class BidirectionalIterator >
 	BidirectionalIterator prev ( BidirectionalIterator& i,
-		typename std::iterator_traits<BidirectionalIterator>::difference_type n )
+		typename rtl::iterator_traits<BidirectionalIterator>::difference_type n )
 	{
 		advance( i, -n );
 		return i;
@@ -112,6 +112,6 @@ namespace std
 	// TODO: all
 
 
-}	// namespace std
+}	// namespace rtl
 
-#endif // _STL_ITERATOR_H_
+#endif // _RTL_ITERATOR_H_
