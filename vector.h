@@ -238,6 +238,19 @@ namespace rtl
 
 	//-----------------------------------------------------------------------
 	template<class T, class allocatorT>
+	vector<T, allocatorT>::vector(const vector<T,allocatorT>& _x)
+		:mSize(0)
+		,mCapacity(0)
+		,mData(0)
+		,mAlloc(_x.mAlloc)
+	{
+		reserve(_x.mSize);
+		for(unsigned i = 0; i < mCapacity; ++i)
+			push_back(_x[i]);
+	}
+
+	//-----------------------------------------------------------------------
+	template<class T, class allocatorT>
 	vector<T,allocatorT>& vector<T,allocatorT>::operator=(const vector<T,allocatorT>& x)
 	{
 		clear();	// Delete previous content

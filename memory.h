@@ -120,7 +120,7 @@ namespace rtl
 
 	//------------------------------------------------------------------------
 	template<class T>
-	inline void allocator<T>::construct( typename allocator<T>::pointer _pAllocatedMemory
+	void allocator<T>::construct( typename allocator<T>::pointer _pAllocatedMemory
 								, typename allocator<T>::const_reference _argument)
 	{
 		new (_pAllocatedMemory)T(_argument); // Placement new of T
@@ -128,7 +128,7 @@ namespace rtl
 
 	//------------------------------------------------------------------------
 	template<class T>
-	inline void allocator<T>::destroy(typename allocator<T>::pointer _object)
+	void allocator<T>::destroy(typename allocator<T>::pointer _object)
 	{
 		_object->~T(); // Call object's destructor, but do not deallocate memory
 	}
