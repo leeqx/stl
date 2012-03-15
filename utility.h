@@ -7,33 +7,10 @@
 #ifndef _RTL_UTILITY_H_
 #define _RTL_UTILITY_H_
 
+#include "utility_operartors.h"
+
 namespace rtl
 {
-	// TODO: Operators
-	// Inequality operator
-	template<class T>
-	inline bool operator != (const T& a, const T& b)
-	{
-		return ! (a == b);
-	}
-	// bigger than comparison
-	template<class T>
-	inline bool operator > ( const T& a, const T& b)
-	{
-		return b < a;
-	}
-	// lessOrEqualThan comparison
-	template<class T>
-	inline bool operator <= (const T& a, const T& b)
-	{
-		return ! (b < a);
-	}
-	// moreOrEqualThan comparison
-	template<class T>
-	inline bool operator >= (const T& a, const T& b)
-	{
-		return !(a < b);
-	}
 	// TODO: General utilities
 	// Swap
 	template <class T>
