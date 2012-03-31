@@ -49,7 +49,7 @@ namespace rtl
 		iterator		end		();
 		const_iterator	end		() const;
 
-		// Capacity
+		// Size and capacity
 		size_type		size	() const		{ return mSize; }
 		size_type		max_size() const		{ return mAlloc.max_size; }
 		void			resize	(size_type n);
