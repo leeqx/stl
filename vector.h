@@ -55,7 +55,7 @@ namespace rtl
 		void			resize	(size_type n);
 		void			resize	(size_type n, const T& x);
 		size_type		capacity() const		{return mCapacity; }
-		bool			empty	() const		{ 0 == mSize; }
+		bool			empty	() const		{ return 0 == mSize; }
 		void			reserve	(size_type n)	{ if(n>mCapacity) reallocate(n); }
 		void			shrink_to_fit()			{ if(mSize != mCapacity) reallocate(mSize); }
 
