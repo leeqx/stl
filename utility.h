@@ -70,7 +70,11 @@ namespace rtl
 	template < class T1, class T2 >
 	bool operator < (const pair<T1,T2>& a, const pair<T1,T2>& b)
 	{
-		return a.first < b.first && a.second < b.second;
+		if(a.first < b.first)
+			return true;
+		else if (b.first < a.first)
+			return false;
+		else return a.second < b.second;
 	}
 
 	template < class T1, class T2 >

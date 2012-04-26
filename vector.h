@@ -64,10 +64,10 @@ namespace rtl
 		const_reference operator[]	(size_type n) const { return mData[n]; }
 		const_reference at			(size_type n) const { return mData[n]; }
 		reference		at			(size_type n)		{ return mData[n]; }
-		reference		front		()			{ *mData; }
-		const_reference	front		() const	{ *mData; }
-		reference		back		()			{ mData[mSize-1]; }
-		const_reference	back		() const	{ mData[mSize-1]; }
+		reference		front		()			{ return *mData; }
+		const_reference	front		() const	{ return *mData; }
+		reference		back		()			{ return mData[mSize-1]; }
+		const_reference	back		() const	{ return mData[mSize-1]; }
 
 		// Data access
 		T*				data		()			{ return mData; }

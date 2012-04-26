@@ -8,10 +8,11 @@
 #include <iterator_tags.h>
 #include <memory.h>
 #include <utility.h>
+#include <vector.h>
 
 namespace rtl
 {
-	template<class T, unsigned NBuckets,class allocatorT = rtl::allocator<T>>
+	template<class T, unsigned NBuckets, class allocatorT = rtl::allocator<T>>
 	class dictionary
 	{
 	public:
@@ -30,11 +31,9 @@ namespace rtl
 		typedef rtl::vector<slotT,allocatorT>	bucketT;
 
 	public:
-		dictionary(const allocatorT& _alloc = allocator<T>());
-		template<unsigned nb>
-		dictionary(const dictionary<T,nb,Allocator>&);
-		template<unsigned nb>
-		dictionary& operator=(const dictionary<T,nb,Allocator>&);
+		dictionary(const allocatorT& _alloc = allocatorT());
+		dictionary(const dictionary<T,NBuckets,allocatorT>&);
+		dictionary& operator=(const dictionary<T,NBuckets,allocatorT>&);
 		~dictionary() {}
 
 		allocator_type get_allocator() const { return mAlloc; }
@@ -55,15 +54,15 @@ namespace rtl
 		static void						keyCopy	(char *& _dst, const char * _src);
 
 	private:
-		size_type			mSize;
-		allocatorT			mAlloc;
-		bucketT[NBuckets]	mBuckets;
+		size_type	mSize;
+		allocatorT	mAlloc;
+		bucketT		mBuckets[NBuckets];
 	};
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Dictionary implementation
 	//------------------------------------------------------------------------------------------------------------------
-	template<class T, unsigned NB, class allocatoTr>
+	template<class T, unsigned NB, class allocatorT>
 	dictionary<T,NB,allocatorT>::dictionary(const allocatorT& _alloc)
 		:mSize(0)
 		,mAlloc(_alloc)
@@ -71,12 +70,12 @@ namespace rtl
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
-	template<class T, unsigned nb1, class allocator, unsigned nb2>
-	dictionary<T,nb1,allocatorT>::dictionary(const dictionary<T,nb2,allocatorT>& x)
+	template<class T, unsigned nb1, class allocatorT>
+	dictionary<T,nb1,allocatorT>::dictionary(const dictionary<T,nb1,allocatorT>& x)
 		:mSize(0)
 		,mAlloc(x.mAlloc)
 	{
-		for(unsinged i = 0; i < nb2; ++i)
+		for(unsinged i = 0; i < nb1; ++i)
 		{
 			unsigned bucketSize = x.mBuckets[i].size();
 			for(unsigned j = 0; j < bucketSize; ++j)
@@ -88,12 +87,12 @@ namespace rtl
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
-	template<class T, unsigned nb1, class allocatorT, unsigned nb2>
-	dictionary<T,nb1,allocatorT>& dictionary<T,nb1,allocatorT>::operator=(const dictionary<T,nb2,allocatorT>& x)
+	template<class T, unsigned nb1, class allocatorT>
+	dictionary<T,nb1,allocatorT>& dictionary<T,nb1,allocatorT>::operator=(const dictionary<T,nb1,allocatorT>& x)
 		:mSize(0)
 		,mAlloc(x.mAlloc)
 	{
-		for(unsinged i = 0; i < nb2; ++i)
+		for(unsinged i = 0; i < nb1; ++i)
 		{
 			unsigned bucketSize = x.mBuckets[i].size();
 			for(unsigned j = 0; j < bucketSize; ++j)
@@ -168,7 +167,7 @@ namespace rtl
 
 	//------------------------------------------------------------------------------------------------------------------
 	template<class T, unsigned nb, class allocatorT>
-	unsigned dictionary<T,nb1,allocator>::hash(const char * _key)
+	unsigned dictionary<T,nb,allocatorT>::hash(const char * _key)
 	{
 		if(!_key)
 			return 0;
@@ -183,7 +182,7 @@ namespace rtl
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
-	template<class T, int nb, class allocatorT>
+	template<class T, unsigned nb, class allocatorT>
 	bool dictionary<T,nb,allocatorT>::keyComp(const char * _a, const char * _b)
 	{
 		if (!_a || !_b)
@@ -199,7 +198,7 @@ namespace rtl
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
-	template<class T, int nb, class allocatorT>
+	template<class T, unsigned nb, class allocatorT>
 	void dictionary<T,nb,allocatorT>::keyCopy(char *& _dst, const char * _src)
 	{
 		for(unsigned i = 0; _src[i] != '\0'; ++i)
